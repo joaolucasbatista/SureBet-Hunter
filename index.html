@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SureBet Hunter</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                <h1>🎯 SureBet Hunter</h1>
+                <p class="subtitle">Detectando oportunidades de arbitragem em tempo real</p>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span id="lastUpdate">Última atualização: --</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="todayCount">0</div>
+                <div class="stat-label">Hoje</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgProfit">0%</div>
+                <div class="stat-label">Lucro Médio</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="successRate">0%</div>
+                <div class="stat-label">Taxa Sucesso</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeBookmakers">0</div>
+                <div class="stat-label">Casas Ativas</div>
+            </div>
+        </div>
+
+        <div class="api-config">
+            <h3>⚙️ Configuração da API</h3>
+            <div class="config-row">
+                <div class="input-group">
+                    <label for="apiKey">Chave da The Odds API</label>
+                    <input type="password" id="apiKey" placeholder="Cole sua chave da API aqui">
+                </div>
+                <div class="input-group">
+                    <label for="sportSelect">Esporte</label>
+                    <select id="sportSelect">
+                        <option value="soccer_brazil_serie_a">Brasileirão Série A</option>
+                        <option value="soccer_spain_la_liga">La Liga</option>
+                        <option value="soccer_uefa_champs_league">Champions League</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="minProfit">Lucro Mín. (%)</label>
+                    <input type="number" id="minProfit" value="3" min="1" max="20">
+                </div>
+                <div>
+                    <button class="btn btn-primary" onclick="saveApiConfig()">Salvar</button>
+                    <button class="btn btn-secondary" onclick="fetchRealData()">Buscar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="surebets-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    🎯 Surebets Ativas (<span id="activeSurebets">0</span>)
+                </h2>
+                <div class="opportunity-badge" id="opportunityAlert" style="display: none;">
+                    Oportunidade de Alto Lucro!
+                </div>
+            </div>
+            
+            <div class="surebets-grid" id="surebetsContainer">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📊</div>
+                    <h3>Buscando oportunidades...</h3>
+                    <p>Monitorando odds em tempo real para detectar surebets</p>
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert-popup" id="alertPopup">
+            🚨 Nova SureBet Detectada!
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
