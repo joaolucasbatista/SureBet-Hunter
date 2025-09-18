@@ -1,3 +1,15 @@
+const sportMap = {
+    "Brasileirão Série A": "soccer_brazil_campeonato",
+    "Premier League": "soccer_epl",
+    "La Liga": "soccer_spain_la_liga",
+    "Serie A (Itália)": "soccer_italy_serie_a",
+    "Bundesliga": "soccer_germany_bundesliga",
+    "Ligue 1": "soccer_france_ligue_one",
+    "Champions League": "soccer_uefa_champs_league",
+    "Europa League": "soccer_uefa_europa_league"
+
+};
+
 class SurebetHunter {
     constructor() {
         this.apiKey = localStorage.getItem('oddsApiKey') || '';
@@ -251,7 +263,7 @@ class SurebetHunter {
                         <h3>${surebet.match}</h3>
                         <div class="match-details">
                             <span class="league-badge">${surebet.league}</span>
-                            <span class="market-badge">${surebet.market}</span>
+                            <span class="market-badgeA>${surebet.market}</span>
                         </div>
                     </div>
                     <div class="profit-info">
@@ -314,52 +326,57 @@ class SurebetHunter {
         }
     }
 
-    async fetchRealData() {
-        if (!this.apiKey) {
-            alert('Por favor, configure sua chave da API primeiro!');
-            return;
-        }
-
-        const sport = document.getElementById('sportSelect').value;
-        const markets = 'h2h,totals,spreads';
-        const regions = 'us,br'; // US para odds gerais, BR para casas brasileiras
-        const url = `${this.apiUrl}/${sport}/odds?apiKey=${this.apiKey}&regions=${regions}&markets=${markets}&oddsFormat=decimal&dateFormat=iso`;
-
-        try {
-            document.getElementById('surebetsContainer').innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-icon">🔄</div>
-                    <h3>Conectando com The Odds API...</h3>
-                    <p>Buscando odds em tempo real</p>
-                    <div class="loading-spinner"></div>
-                </div>
-            `;
-            
-            const response = await fetch(url);
-            
-            if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status} - ${response.statusText}`);
-            }
-            
-            const data = await response.json();
-            console.log('Dados recebidos da API:', data);
-            
-            if (data.length === 0) {
-                throw new Error('Nenhum jogo encontrado para este esporte');
-            }
-            
-            this.processRealData(data);
-            this.mockMode = false;
-            
-        } catch (error) {
-            console.error('Erro ao buscar dados reais:', error);
-            alert(`Erro ao conectar com a API: ${error.message}\nVerifique sua chave e tente novamente.`);
-            
-            // Voltar para dados mockados em caso de erro
-            this.mockMode = true;
-            this.generateMockData();
-        }
+   async fetchRealData() {
+    if (!this.apiKey) {
+        alert('Por favor, configure sua chave da API primeiro!');
+        return;
     }
+  const sportName = document.getElementById('sportSelect').value;
+    const sport = sportMap[sportName] || sportName; 
+    
+    // 🔥 correção aqui
+    const markets = 'h2h,totals,spreads';
+    const regions = 'us,br'; // US para odds gerais, BR para casas brasileiras
+
+    // 🔥 Correção aqui: adicionei a barra antes de ? ( .../odds/?... )
+    const url = `${this.apiUrl}/${sport}/odds/?apiKey=${this.apiKey}&regions=${regions}&markets=${markets}&oddsFormat=decimal&dateFormat=iso`;
+
+    try {
+        document.getElementById('surebetsContainer').innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">🔄</div>
+                <h3>Conectando com The Odds API...</h3>
+                <p>Buscando odds em tempo real</p>
+                <div class="loading-spinner"></div>
+            </div>
+        `;
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status} - ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Dados recebidos da API:', data);
+        
+        if (data.length === 0) {
+            throw new Error('Nenhum jogo encontrado para este esporte');
+        }
+        
+        this.processRealData(data);
+        this.mockMode = false;
+        
+    } catch (error) {
+        console.error('Erro ao buscar dados reais:', error);
+        alert(`Erro ao conectar com a API: ${error.message}\nVerifique sua chave e tente novamente.`);
+        
+        // Voltar para dados mockados em caso de erro
+        this.mockMode = true;
+        this.generateMockData();
+    }
+}
+
 
     processRealData(apiData) {
         const validSurebets = [];
